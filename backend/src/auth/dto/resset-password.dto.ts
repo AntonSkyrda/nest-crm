@@ -1,0 +1,12 @@
+import { IsString, MaxLength, MinLength } from 'class-validator';
+
+export class RessetPasswordDto {
+  @IsString()
+  @MinLength(8)
+  @MaxLength(20)
+  password: string;
+  @IsString()
+  @MinLength(8)
+  @MaxLength(20)
+  confirmPassword: string;
+}
