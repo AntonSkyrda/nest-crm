@@ -13,7 +13,6 @@ import { MailModule } from '../mail/mail.module';
 
 @Module({
   imports: [
-    ConfigModule,
     SharedModule,
     MailModule,
     PassportModule.register({ defaultStrategy: 'jwt' }),

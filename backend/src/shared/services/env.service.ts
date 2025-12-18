@@ -30,7 +30,7 @@ export class EnvService {
   constructor(private configService: ConfigService) {
     this.jwtSecret = configService.get<string>('JWT_SECRET') || '';
     this.jwtAccessTokenExpireTime =
-      configService.get<number>('JWT_ACCESS_EXPIRE_TIME') || 0;
+      configService.get<number>('JWT_ACCESS_EXPIRE_TIME') || 600;
     this.jwtRefreshTokenExpireTime =
       configService.get<number>('JWT_REFRESH_EXPIRE_TIME') || 0;
     this.jwtActivateTokenExpireTime =

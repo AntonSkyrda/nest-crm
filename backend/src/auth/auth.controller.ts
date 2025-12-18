@@ -15,6 +15,8 @@ import { ActivateAccountDto } from './dto/activate-account.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { CurrentUser } from './decorators/current-user.decorator';
 import { User } from './enteties/user.entity';
+import { UserMeDto } from './dto/user-me.dto';
+import { toUserMeDto } from './mappers/user.mapper';
 
 @Controller('auth')
 export class AuthController {
@@ -58,10 +60,7 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Get('me')
-  me(@CurrentUser() user: User) {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars,@typescript-eslint/no-unsafe-assignment
-    const { password, ...safe } = user as any;
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    return safe;
+  me(@CurrentUser() user: User): UserMeDto {
+    return toUserMeDto(user);
   }
 }

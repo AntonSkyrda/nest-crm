@@ -33,7 +33,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     if (!tokenEntity || tokenEntity.user.isBlocked) {
       throw new UnauthorizedException('Token is blocked or invalid');
     }
-
     return tokenEntity.user;
   }
 }

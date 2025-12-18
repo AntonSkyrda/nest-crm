@@ -33,9 +33,9 @@ export class AuthService {
     private readonly envService: EnvService,
     private readonly mailService: MailService,
   ) {
-    this.accessTokenExpiresIn = envService.jwtAccessTokenExpireTime;
-    this.refreshTokenExpiresIn = envService.jwtRefreshTokenExpireTime;
-    this.activateTokenExpiresIn = envService.jwtActivateTokenExpireTime;
+    this.accessTokenExpiresIn = Number(envService.jwtAccessTokenExpireTime);
+    this.refreshTokenExpiresIn = Number(envService.jwtRefreshTokenExpireTime);
+    this.activateTokenExpiresIn = Number(envService.jwtActivateTokenExpireTime);
     this.frontendUrl = envService.frontendUrl;
   }
 
@@ -203,7 +203,7 @@ export class AuthService {
 
     user.password = password;
     user.isActive = true;
-    await this.tokenRepository.save(user);
+    await this.userRepository.save(user);
   }
 
   private async validateUser(email: string, password: string): Promise<User> {
@@ -212,20 +212,14 @@ export class AuthService {
       .addSelect('u.password')
       .where('u.email = :email', { email })
       .getOne();
-    if (!user || !(await user.validatePassword(password))) {
-      throw new UnauthorizedException('Invalid email or password');
-    }
 
-    if (!user.isActive) {
-      throw new UnauthorizedException('User is not active');
-    }
-
-    if (user.isBlocked) {
-      throw new UnauthorizedException('User is blocked');
-    }
+    if (!user) throw new UnauthorizedException('Invalid email or password');
+    if (!user.isActive) throw new UnauthorizedException('User is not active');
+    if (user.isBlocked) throw new UnauthorizedException('User is blocked');
 
     const ok = await user.validatePassword(password);
     if (!ok) throw new UnauthorizedException('Invalid email or password');
+
     return user;
   }
 
