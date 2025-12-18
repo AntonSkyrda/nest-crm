@@ -4,6 +4,7 @@ import { SharedModule } from './shared/shared.module';
 import { TypeormModule } from './type-orm.module';
 import { APP_FILTER } from '@nestjs/core';
 import { GlobalExceptionFilter } from './shared/filters/global-exeption.filter';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { GlobalExceptionFilter } from './shared/filters/global-exeption.filter';
     }),
     SharedModule,
     TypeormModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [
