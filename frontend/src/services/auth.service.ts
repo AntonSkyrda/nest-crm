@@ -24,6 +24,18 @@ export const authService = {
         }
     },
 
+    async logout(): Promise<void> {
+        const refreshToken = this.getRefreshToken();
+
+        try {
+            if (!refreshToken) return;
+
+            await apiService.post<void>(urls.auth.logout, {refreshToken});
+        } finally {
+            this.deleteTokens()
+        }
+    },
+
     setTokens({accessToken, refreshToken}: ITokens): void {
         localStorage.setItem(_accessToken, accessToken);
         localStorage.setItem(_refreshToken, refreshToken);

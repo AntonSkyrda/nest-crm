@@ -1,4 +1,6 @@
-const auth = "/auth"
+export const baseUrl = import.meta.env.VITE_API_URL;
+
+const auth = `${baseUrl}/auth`
 
 export const urls = {
     auth: {
@@ -6,5 +8,6 @@ export const urls = {
         register: `${auth}/register`,
         refresh: `${auth}/refresh`,
         me: `${auth}/me`,
+        logout: `${auth}/logout`,
     }
 }
