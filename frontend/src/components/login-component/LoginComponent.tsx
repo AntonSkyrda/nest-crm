@@ -7,6 +7,7 @@ import {Card, CardContent} from "../ui/card.tsx";
 import {Label} from "../ui/label.tsx";
 import {Input} from "../ui/input.tsx";
 import {Button} from "../ui/button.tsx";
+import {appRoutes} from "../../constants/app-routes.ts";
 
 export const LoginComponent = () => {
     const {register, handleSubmit} = useForm<IAuth>();
@@ -17,7 +18,7 @@ export const LoginComponent = () => {
         const {meta: {requestStatus}} = await dispatch(authActions.login({user}))
 
         if (requestStatus === "fulfilled") {
-            navigate("/")
+            navigate(appRoutes.INDEX)
         }
     }
 

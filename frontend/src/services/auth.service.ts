@@ -4,23 +4,34 @@ import type {ITokens} from "../models/IToken.ts";
 import {apiService} from "./api.service.ts";
 import type {IResponseType} from "../types/response.type.ts";
 import {urls} from "../constants/ursl.ts";
+import {getApiErrorMessage} from "../utils/api-error.ts";
 
 const _accessToken = "accessToken";
 const _refreshToken = "refreshToken";
 
 export const authService = {
     async login(user: IAuth): Promise<IUser> {
-        const {data} = await apiService.post<ITokens>(urls.auth.login, user);
-        this.setTokens(data);
-        const { data: me } = await this.me()
-        return me
+        try {
+            const {data} = await apiService.post<ITokens>(urls.auth.login, user);
+            this.setTokens(data);
+            const { data: me } = await this.me()
+            return me
+        } catch (error: unknown) {
+            this.deleteTokens()
+            throw new Error(getApiErrorMessage(error, "Login failed."))
+        }
     },
 
     async refresh(): Promise<void> {
         const refreshToken = this.getRefreshToken();
-        if (refreshToken) {
-            const {data} = await apiService.post<ITokens>(urls.auth.refresh, {refreshToken});
+        if (!refreshToken) return;
+
+        try {
+            const { data } = await apiService.post<ITokens>(urls.auth.refresh, { refreshToken });
             this.setTokens(data);
+        } catch (error: unknown) {
+            this.deleteTokens();
+            throw new Error(getApiErrorMessage(error, "Session refresh failed."));
         }
     },
 
@@ -31,6 +42,8 @@ export const authService = {
             if (!refreshToken) return;
 
             await apiService.post<void>(urls.auth.logout, {refreshToken});
+        } catch (error: unknown) {
+            throw new Error(getApiErrorMessage(error, "Logout failed."));
         } finally {
             this.deleteTokens()
         }

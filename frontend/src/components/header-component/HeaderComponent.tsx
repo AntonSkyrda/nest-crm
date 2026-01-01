@@ -2,7 +2,6 @@ import {useAppDispatch, useAppSelector} from "../../hooks/redux-hooks.ts";
 import {useNavigate} from "react-router-dom";
 import {useMemo} from "react";
 import {authActions} from "../../redux/slices/auth.slice.ts";
-import type {IUser} from "../../models/IUser.ts";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -12,26 +11,8 @@ import {
     DropdownMenuTrigger
 } from "../ui/dropdown-menu.tsx";
 import {Avatar, AvatarFallback} from "../ui/avatar.tsx";
-
-function getDisplayName(user: unknown): { name: string; initials: string } {
-    let name = "User";
-
-    if (user && typeof user === "object") {
-        const first = "firstName" in user ? (user as IUser).firstName : "";
-        const last = "lastName" in user ? (user as IUser).lastName : "";
-        const email = "email" in user ? (user as IUser).email : "";
-
-        name = `${first} ${last}`.trim() || email || "User";
-    }
-
-    const parts = name.split(" ").filter(Boolean);
-    const initials =
-        parts.length >= 2
-            ? `${parts[0][0] ?? ""}${parts[1][0] ?? ""}`.toUpperCase()
-            : (parts[0]?.slice(0, 2) ?? "US").toUpperCase();
-
-    return { name, initials };
-}
+import {getDisplayName} from "../../utils/utils.ts";
+import {appRoutes} from "../../constants/app-routes.ts";
 
 export const HeaderComponent = () => {
     const me = useAppSelector(state => state.auth.me);
@@ -42,13 +23,13 @@ export const HeaderComponent = () => {
 
     const onLogout = async () => {
         await dispatch(authActions.logout())
-        navigate("/login", { replace: true });
+        navigate(appRoutes.LOGIN, { replace: true });
     }
 
     return (
-        <header className="border-b bg-background">
+        <header className="border-b bg-[#79b35a]">
             <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-4">
-                <div className="font-semibold">
+                <div className="font-semibold text-white">
                     Nest CRM
                 </div>
 
