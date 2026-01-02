@@ -1,6 +1,7 @@
 export const baseUrl = import.meta.env.VITE_API_URL;
 
 const auth = `${baseUrl}/auth`
+const orders = `${baseUrl}/orders`
 
 export const urls = {
     auth: {
@@ -9,5 +10,9 @@ export const urls = {
         refresh: `${auth}/refresh`,
         me: `${auth}/me`,
         logout: `${auth}/logout`,
+    },
+    orders: {
+        allOrders: orders,
+        orderById: `${orders}/:id`,
     }
 }

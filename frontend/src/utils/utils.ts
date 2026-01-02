@@ -19,3 +19,18 @@ export const getDisplayName = (user: unknown): { name: string; initials: string 
 
     return { name, initials };
 }
+
+export const formatDateTime = (value: string | Date | null | undefined) => {
+    if (!value) return "—";
+
+    const date = value instanceof Date ? value : new Date(value);
+
+    if (Number.isNaN(date.getTime())) return "—";
+
+    return date.toLocaleString();
+};
+
+export const formatMoney = (value: number | null | undefined) => {
+    if (value === null || value === undefined) return "—";
+    return String(value)
+}
