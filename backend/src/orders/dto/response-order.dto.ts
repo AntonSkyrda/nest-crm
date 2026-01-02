@@ -1,5 +1,5 @@
 export class ResponseOrderDto {
-  id: string;
+  id: number;
   name: string | null;
   surname: string | null;
   email: string | null;

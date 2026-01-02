@@ -1,4 +1,9 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity({ name: 'orders' })
 export class Order {
@@ -35,6 +40,7 @@ export class Order {
   @Column({ type: 'int', nullable: true })
   alreadyPaid: number | null;
 
+  @CreateDateColumn()
   @Column({ type: 'datetime', precision: 6, nullable: true })
   created_at: Date | null;
 

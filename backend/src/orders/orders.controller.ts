@@ -4,12 +4,13 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
   Query,
 } from '@nestjs/common';
 import { OrdersService } from './orders.service';
-import { Order } from './enteties/order.entity';
+import { Order } from './entities/order.entity';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { ResponseOrdersModel } from './models/response-orders.model';
 import { PaginationQueryDto } from './dto/pagination-query.dto';
@@ -31,13 +32,13 @@ export class OrdersController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: number): Promise<Order> {
+  async findOne(@Param('id', ParseIntPipe) id: number): Promise<Order> {
     return this.ordersService.findById(id);
   }
 
   @Patch(':id')
   async update(
-    @Param('id') id: number,
+    @Param('id', ParseIntPipe) id: number,
     @Body() updateOrderDto: UpdateOrderDto,
   ): Promise<Order> {
     return await this.ordersService.update(id, updateOrderDto);

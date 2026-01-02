@@ -1,4 +1,4 @@
-import { Order } from '../enteties/order.entity';
+import { Order } from '../entities/order.entity';
 
 export class ResponseOrdersModel {
   orders: Order[];

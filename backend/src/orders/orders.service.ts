@@ -1,10 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Order } from './enteties/order.entity';
+import { Order } from './entities/order.entity';
 import { Repository } from 'typeorm';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { ResponseOrdersModel } from './models/response-orders.model';
+import { OrderErrorEnum } from '../enums/order-error.enum';
 
 @Injectable()
 export class OrdersService {
@@ -46,18 +47,32 @@ export class OrdersService {
     const order = await this.orderRepository.findOneBy({ id });
 
     if (!order) {
-      throw new NotFoundException(`Order with id ${id} not found`);
+      throw new NotFoundException({
+        errorCode: OrderErrorEnum.OrderNotFound,
+      });
     }
 
     return order;
   }
 
   async update(id: number, updateOrderDto: UpdateOrderDto): Promise<Order> {
-    await this.orderRepository.update(id, updateOrderDto);
+    const result = await this.orderRepository.update(id, updateOrderDto);
+
+    if (!result.affected) {
+      throw new NotFoundException({
+        errorCode: OrderErrorEnum.OrderNotFound,
+      });
+    }
     return this.findById(id);
   }
 
   async delete(id: number): Promise<void> {
-    await this.orderRepository.delete(id);
+    const result = await this.orderRepository.delete({ id });
+
+    if (!result.affected) {
+      throw new NotFoundException({
+        errorCode: OrderErrorEnum.OrderNotFound,
+      });
+    }
   }
 }
