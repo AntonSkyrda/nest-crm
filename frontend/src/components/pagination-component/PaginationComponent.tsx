@@ -59,7 +59,7 @@ export const PaginationComponent: FC<Props> = ({
         onPageChange(clamp(next, 1, totalPages));
 
     return (
-        <nav className="flex items-center gap-2 select-none">
+        <nav className="flex justify-center items-center gap-2 select-none">
             {safePage > 1 && (
                 <button
                     onClick={() => goTo(safePage - 1)}
@@ -91,7 +91,6 @@ export const PaginationComponent: FC<Props> = ({
                     )
             )}
 
-            {/* Next */}
             {safePage < totalPages && (
                 <button
                     onClick={() => goTo(safePage + 1)}
