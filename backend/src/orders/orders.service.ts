@@ -43,6 +43,7 @@ export class OrdersService {
       take: safeLimit,
       skip: (safePage - 1) * safeLimit,
       order: { [safeSortBy]: safeSortDir.toUpperCase() as 'ASC' | 'DESC' },
+      relations: { manager: true },
     });
 
     return {

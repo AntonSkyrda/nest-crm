@@ -1,3 +1,5 @@
+import type {IManager} from "./IManager.ts";
+
 export interface IOrder {
     id: number;
     name: string;
@@ -14,4 +16,5 @@ export interface IOrder {
     utm: string;
     msg: string;
     status: string;
+    manager: IManager;
 }

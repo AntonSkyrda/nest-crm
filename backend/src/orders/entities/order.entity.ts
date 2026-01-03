@@ -2,8 +2,10 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { User } from '../../auth/enteties/user.entity';
 
 @Entity({ name: 'orders' })
 export class Order {
@@ -52,4 +54,10 @@ export class Order {
 
   @Column({ type: 'varchar', length: 15, nullable: true })
   status: string | null;
+
+  @Column({ type: 'int', nullable: true })
+  managerId: number | null;
+
+  @ManyToOne(() => User, { onDelete: 'SET NULL' })
+  manager: User | null;
 }
