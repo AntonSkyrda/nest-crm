@@ -65,7 +65,7 @@ export const PaginationComponent: FC<Props> = (
             {safePage > 1 && (
                 <button
                     onClick={() => goTo(safePage - 1)}
-                    className="h-9 w-9 rounded-full bg-green-500 text-white hover:bg-green-600"
+                    className="h-9 w-9 rounded-full bg-[#79b35a] text-white hover:bg-green-600"
                 >
                     {"<"}
                 </button>
@@ -76,7 +76,7 @@ export const PaginationComponent: FC<Props> = (
                     item === "dots" ? (
                         <span
                             key={`dots-${index}`}
-                            className="h-9 min-w-9 px-3 flex items-center justify-center rounded-full bg-green-500 text-white opacity-70"
+                            className="h-9 min-w-9 px-3 flex items-center justify-center rounded-full bg-[#79b35a] text-white opacity-70"
                         >
             …
           </span>
@@ -87,7 +87,7 @@ export const PaginationComponent: FC<Props> = (
                             className={`h-9 min-w-9 px-3 rounded-full text-white ${
                                 item === safePage
                                     ? "bg-green-700"
-                                    : "bg-green-500 hover:bg-green-600"
+                                    : "bg-[#79b35a] hover:bg-green-600"
                             }`}
                         >
                             {item}
@@ -98,7 +98,7 @@ export const PaginationComponent: FC<Props> = (
             {safePage < totalPages && (
                 <button
                     onClick={() => goTo(safePage + 1)}
-                    className="h-9 w-9 rounded-full bg-green-500 text-white hover:bg-green-600"
+                    className="h-9 w-9 rounded-full bg-[#79b35a] text-white hover:bg-green-600"
                 >
                     {">"}
                 </button>
