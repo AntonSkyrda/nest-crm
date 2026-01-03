@@ -3,7 +3,7 @@ import type {IUser} from "../models/IUser.ts";
 import type {ITokens} from "../models/IToken.ts";
 import {apiService} from "./api.service.ts";
 import type {IResponseType} from "../types/response.type.ts";
-import {urls} from "../constants/ursl.ts";
+import {urls} from "../constants/urls.ts";
 import {getApiErrorMessage} from "../utils/api-error.ts";
 
 const _accessToken = "accessToken";
