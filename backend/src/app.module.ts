@@ -6,6 +6,7 @@ import { APP_FILTER } from '@nestjs/core';
 import { GlobalExceptionFilter } from './shared/filters/global-exeption.filter';
 import { AuthModule } from './auth/auth.module';
 import { OrdersModule } from './orders/orders.module';
+import { GroupsModule } from './groups/groups.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { OrdersModule } from './orders/orders.module';
     TypeormModule,
     AuthModule,
     OrdersModule,
+    GroupsModule,
   ],
   controllers: [],
   providers: [

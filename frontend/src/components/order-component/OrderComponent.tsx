@@ -22,7 +22,10 @@ export const OrderComponent: FC<Props> = ({ order }) => {
             <td className="p-2 align-top">{formatMoney(order.sum)}</td>
             <td className="p-2 align-top">{formatMoney(order.alreadyPaid)}</td>
             <td className="p-2 align-top">{formatDateTime(order.created_at)}</td>
-            <td className="p-2 align-top">{order.manager ? `${order.manager.firstName} ${order.manager.lastName}` : "—"}</td>
+            <td className="p-2 align-top">{
+                order.manager ? `${order.manager.firstName} ${order.manager.lastName}` : "—"
+            }</td>
+                <td className="p-2 align-top">{order.group ? order.group.name : "—"}</td>
         </tr>
     );
 };

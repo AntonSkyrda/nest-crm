@@ -30,6 +30,7 @@ export const OrdersComponent = () => {
                         <Th label="alreadyPaid" field="alreadyPaid" activeField={sortBy} activeDir={sortDir} onClick={toggleSort} />
                         <Th label="created_at" field="created_at" activeField={sortBy} activeDir={sortDir} onClick={toggleSort} />
                         <th> manager </th>
+                        <th> group </th>
                     </tr>
                     </thead>
 
