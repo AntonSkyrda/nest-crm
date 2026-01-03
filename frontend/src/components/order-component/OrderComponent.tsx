@@ -2,11 +2,11 @@ import type {IOrder} from "../../models/IOrder.ts";
 import {formatDateTime, formatMoney} from "../../utils/utils.ts";
 import type {FC} from "react";
 
-type PropsType = {
+type Props = {
     order: IOrder;
 }
 
-export const OrderComponent: FC<PropsType> = ({ order }) => {
+export const OrderComponent: FC<Props> = ({ order }) => {
     return (
         <tr className="border-b last:border-b-0 hover:bg-muted/50">
             <td className="p-2 align-top">{order.id ?? "—"}</td>

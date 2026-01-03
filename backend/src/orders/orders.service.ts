@@ -6,6 +6,9 @@ import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { ResponseOrdersModel } from './models/response-orders.model';
 import { OrderErrorEnum } from '../enums/order-error.enum';
+import { ALLOWED_SORT_FIELDS } from './constants/order.constants';
+import type { SortBy, SortDir } from './types/sort.types';
+import { OrdersQueryDto } from './dto/orders-query.dto';
 
 @Injectable()
 export class OrdersService {
@@ -19,27 +22,35 @@ export class OrdersService {
     return this.orderRepository.save(newOrder);
   }
 
-  async findAll(query: {
-    page?: number;
-    limit?: number;
-  }): Promise<ResponseOrdersModel> {
+  async findAll(query: OrdersQueryDto): Promise<ResponseOrdersModel> {
     const page = query.page ?? 1;
     const limit = query.limit ?? 25;
 
-    const [orders, total] = await this.orderRepository.findAndCount({
-      skip: (page - 1) * limit,
-      take: limit,
-      order: { created_at: 'DESC' },
-    });
+    const sortBy = query.sortBy;
+    const sortDir = query.sortDir;
 
-    const totalPages = total === 0 ? 1 : Math.ceil(total / limit);
+    const safePage = Math.max(1, Number(page) || 1);
+
+    const safeLimit = Math.min(100, Math.max(1, Number(limit) || 25)); // optional
+
+    const safeSortBy: SortBy = ALLOWED_SORT_FIELDS.includes(sortBy as SortBy)
+      ? (sortBy as SortBy)
+      : 'created_at';
+
+    const safeSortDir: SortDir = sortDir === 'asc' ? 'asc' : 'desc';
+
+    const [orders, total] = await this.orderRepository.findAndCount({
+      take: safeLimit,
+      skip: (safePage - 1) * safeLimit,
+      order: { [safeSortBy]: safeSortDir.toUpperCase() as 'ASC' | 'DESC' },
+    });
 
     return {
       orders,
       total,
-      page,
-      limit,
-      totalPages,
+      page: safePage,
+      limit: safeLimit,
+      totalPages: Math.max(1, Math.ceil(total / safeLimit)),
     };
   }
 

@@ -13,8 +13,8 @@ import { OrdersService } from './orders.service';
 import { Order } from './entities/order.entity';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { ResponseOrdersModel } from './models/response-orders.model';
-import { PaginationQueryDto } from './dto/pagination-query.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
+import { OrdersQueryDto } from './dto/orders-query.dto';
 
 @Controller('orders')
 export class OrdersController {
@@ -25,9 +25,7 @@ export class OrdersController {
   }
 
   @Get()
-  async findAll(
-    @Query() query: PaginationQueryDto,
-  ): Promise<ResponseOrdersModel> {
+  async findAll(@Query() query: OrdersQueryDto): Promise<ResponseOrdersModel> {
     return this.ordersService.findAll(query);
   }
 

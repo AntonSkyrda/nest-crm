@@ -1,4 +1,12 @@
-import type { FC } from "react";
+import type { FC, MouseEvent } from "react";
+import {
+    Pagination,
+    PaginationContent,
+    PaginationEllipsis,
+    PaginationItem, PaginationLink, PaginationNext,
+    PaginationPrevious
+} from "../ui/pagination.tsx";
+
 
 type PageItem = number | "dots";
 
@@ -26,9 +34,7 @@ const buildPagination = (
     if (totalPages <= 1) return [1];
 
     const maxVisible = 2 + siblings * 2 + 1; // 1 + window + last
-    if (totalPages <= maxVisible) {
-        return range(1, totalPages);
-    }
+    if (totalPages <= maxVisible) return range(1, totalPages);
 
     const left = Math.max(2, page - siblings);
     const right = Math.min(totalPages - 1, page + siblings);
@@ -44,61 +50,64 @@ const buildPagination = (
     return items;
 };
 
-export const PaginationComponent: FC<Props> = ({
-                                                   page,
-                                                   totalPages,
-                                                   onPageChange,
-                                                   siblings = 3,
-                                               }) => {
+export const PaginationComponent: FC<Props> = (
+    {
+        page,
+        totalPages,
+        onPageChange,
+        siblings = 3,
+    }
+) => {
     if (totalPages <= 1) return null;
 
     const safePage = clamp(page, 1, totalPages);
     const items = buildPagination(safePage, totalPages, siblings);
 
-    const goTo = (next: number) =>
-        onPageChange(clamp(next, 1, totalPages));
+    const onNav = (e: MouseEvent, nextPage: number) => {
+        e.preventDefault();
+        onPageChange(clamp(nextPage, 1, totalPages));
+    };
 
     return (
-        <nav className="flex justify-center items-center gap-2 select-none">
-            {safePage > 1 && (
-                <button
-                    onClick={() => goTo(safePage - 1)}
-                    className="h-9 w-9 rounded-full bg-green-500 text-white hover:bg-green-600"
-                >
-                    {"<"}
-                </button>
-            )}
-            {items.map((item, index) =>
+        <Pagination className="flex justify-center">
+            <PaginationContent>
+                {safePage > 1 && (
+                    <PaginationItem>
+                        <PaginationPrevious
+                            href="#"
+                            size="default"
+                            onClick={(e) => onNav(e, safePage - 1)}
+                        />
+                    </PaginationItem>
+                )}
+                {items.map((item, index) =>
                     item === "dots" ? (
-                        <span
-                            key={`dots-${index}`}
-                            className="h-9 min-w-9 px-3 flex items-center justify-center rounded-full bg-green-500 text-white opacity-70"
-                        >
-            …
-          </span>
+                        <PaginationItem key={`dots-${index}`}>
+                            <PaginationEllipsis />
+                        </PaginationItem>
                     ) : (
-                        <button
-                            key={item}
-                            onClick={() => goTo(item)}
-                            className={`h-9 min-w-9 px-3 rounded-full text-white ${
-                                item === safePage
-                                    ? "bg-green-700"
-                                    : "bg-green-500 hover:bg-green-600"
-                            }`}
-                        >
-                            {item}
-                        </button>
+                        <PaginationItem key={item}>
+                            <PaginationLink
+                                size="default"
+                                href="#"
+                                isActive={item === safePage}
+                                onClick={(e) => onNav(e, item)}
+                            >
+                                {item}
+                            </PaginationLink>
+                        </PaginationItem>
                     )
-            )}
-
-            {safePage < totalPages && (
-                <button
-                    onClick={() => goTo(safePage + 1)}
-                    className="h-9 w-9 rounded-full bg-green-500 text-white hover:bg-green-600"
-                >
-                    {">"}
-                </button>
-            )}
-        </nav>
+                )}
+                {safePage < totalPages && (
+                    <PaginationItem>
+                        <PaginationNext
+                            size="default"
+                            href="#"
+                            onClick={(e) => onNav(e, safePage + 1)}
+                        />
+                    </PaginationItem>
+                )}
+            </PaginationContent>
+        </Pagination>
     );
 };
