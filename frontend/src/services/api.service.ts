@@ -1,7 +1,7 @@
 import axios, { AxiosError, type InternalAxiosRequestConfig } from "axios";
 import { authService } from "./auth.service";
 import { router } from "../routes/Routes";
-import { baseUrl, urls } from "../constants/ursl";
+import { baseUrl, urls } from "../constants/urls.ts";
 
 export const apiService = axios.create({ baseURL: baseUrl });
 

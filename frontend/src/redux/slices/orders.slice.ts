@@ -2,6 +2,7 @@ import type {IOrder} from "../../models/IOrder.ts";
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import type {IOrdersResponse} from "../../models/IOrderResponse.ts";
 import {ordersService} from "../../services/orders.service.ts";
+import type {SortDir} from "../../constants/orders.ts";
 
 interface OrdersState {
     orders: IOrder[];
@@ -19,19 +20,15 @@ const initialState: OrdersState = {
 
 export const fetchOrders = createAsyncThunk<
     IOrdersResponse,
-    number,
-    { rejectValue: string}
->(
-    "orders/fetchOrders",
-    async (page, {rejectWithValue}) => {
-        try {
-            return await ordersService.getAllOrders(page);
-        } catch (error) {
-            if (error instanceof Error) return rejectWithValue(error.message);
-            return rejectWithValue("Error fetching orders");
-        }
+    { page: number; limit?: number; sortBy?: string; sortDir?: SortDir },
+    { rejectValue: string }
+>("orders/fetchOrders", async (args, { rejectWithValue }) => {
+    try {
+        return await ordersService.getAllOrders(args);
+    } catch (e) {
+        return rejectWithValue((e as Error).message);
     }
-)
+});
 
 const ordersSlice = createSlice({
     name: "orders",

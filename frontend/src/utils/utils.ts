@@ -1,3 +1,5 @@
+import { format, isValid, parseISO } from "date-fns";
+
 import type {IUser} from "../models/IUser.ts";
 
 export const getDisplayName = (user: unknown): { name: string; initials: string } => {
@@ -20,17 +22,17 @@ export const getDisplayName = (user: unknown): { name: string; initials: string 
     return { name, initials };
 }
 
-export const formatDateTime = (value: string | Date | null | undefined) => {
+export const formatDateTime = (
+    value: string | Date | null | undefined
+): string => {
     if (!value) return "—";
 
-    const date = value instanceof Date ? value : new Date(value);
-    if (Number.isNaN(date.getTime())) return "—";
+    const date =
+        typeof value === "string" ? parseISO(value) : value;
 
-    return new Intl.DateTimeFormat("en-US", {
-        month: "short",
-        day: "2-digit",
-        year: "numeric",
-    }).format(date);
+    if (!isValid(date)) return "—";
+
+    return format(date, "MMM d, yyyy");
 };
 
 
@@ -38,3 +40,4 @@ export const formatMoney = (value: number | null | undefined) => {
     if (value === null || value === undefined) return "—";
     return String(value)
 }
+
