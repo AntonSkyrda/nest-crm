@@ -13,6 +13,7 @@ export const urls = {
     },
     orders: {
         allOrders: orders,
-        orderById: `${orders}/:id`,
+        orderById: (id: number | string) => `${orders}/${id}`,
+        orderComment: (id: number | string) => `${orders}/${id}/comments`,
     }
 }
