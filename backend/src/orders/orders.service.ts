@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Order } from './entities/order.entity';
 import { Repository } from 'typeorm';
@@ -9,12 +13,17 @@ import { OrderErrorEnum } from '../enums/order-error.enum';
 import { ALLOWED_SORT_FIELDS } from './constants/order.constants';
 import type { SortBy, SortDir } from './types/sort.types';
 import { OrdersQueryDto } from './dto/orders-query.dto';
+import { OrderComment } from './entities/order-comment.entity';
+import { OrderStatusEnum } from '../enums/order-status.enum';
+import { User } from '../auth/enteties/user.entity';
 
 @Injectable()
 export class OrdersService {
   constructor(
     @InjectRepository(Order)
     private readonly orderRepository: Repository<Order>,
+    @InjectRepository(OrderComment)
+    private readonly orderCommentRepository: Repository<OrderComment>,
   ) {}
 
   async create(createOrderDto: CreateOrderDto): Promise<Order> {
@@ -86,5 +95,40 @@ export class OrdersService {
         errorCode: OrderErrorEnum.OrderNotFound,
       });
     }
+  }
+
+  async addComment(orderId: number, text: string, user: User): Promise<Order> {
+    const order = await this.orderRepository.findOne({
+      where: { id: orderId },
+      relations: { comments: true },
+    });
+
+    if (!order)
+      throw new NotFoundException({ errorCode: OrderErrorEnum.OrderNotFound });
+
+    if (order.managerId && order.managerId !== user.id) {
+      throw new ForbiddenException('Order is taken by another manager');
+    }
+
+    if (order.status === null || order.status === OrderStatusEnum.NEW) {
+      order.status = OrderStatusEnum.IN_WORK;
+    }
+    order.managerId = user.id;
+
+    const comment = this.orderCommentRepository.create({
+      text,
+      authorLastName: user.lastName,
+      order,
+      orderId: order.id,
+    });
+
+    await this.orderCommentRepository.save(comment);
+
+    await this.orderRepository.save(order);
+
+    return this.orderRepository.findOneOrFail({
+      where: { id: orderId },
+      relations: { comments: true },
+    });
   }
 }

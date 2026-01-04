@@ -3,10 +3,14 @@ import {
   CreateDateColumn,
   Entity,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { User } from '../../auth/enteties/user.entity';
 import { Group } from '../../groups/entities/group.entity';
+import { OrderComment } from './order-comment.entity';
+import { OrderStatusEnum } from '../../enums/order-status.enum';
+import { CourseTypeEnum } from '../../enums/course-type.enum';
 
 @Entity({ name: 'orders' })
 export class Order {
@@ -28,8 +32,8 @@ export class Order {
   @Column({ type: 'int', nullable: true })
   age: number | null;
 
-  @Column({ type: 'varchar', length: 10, nullable: true })
-  course: string | null;
+  @Column({ type: 'enum', enum: CourseTypeEnum, nullable: true })
+  course: CourseTypeEnum | null;
 
   @Column({ type: 'varchar', length: 15, nullable: true })
   course_format: string | null;
@@ -53,8 +57,8 @@ export class Order {
   @Column({ type: 'varchar', length: 100, nullable: true })
   msg: string | null;
 
-  @Column({ type: 'varchar', length: 15, nullable: true })
-  status: string | null;
+  @Column({ type: 'enum', enum: OrderStatusEnum, nullable: true })
+  status: OrderStatusEnum | null;
 
   @Column({ type: 'int', nullable: true })
   managerId: number | null;
@@ -67,4 +71,7 @@ export class Order {
 
   @ManyToOne(() => Group, { onDelete: 'SET NULL' })
   group: Group | null;
+
+  @OneToMany(() => OrderComment, (comment) => comment.order, { cascade: false })
+  comments: OrderComment[];
 }

@@ -1,13 +1,15 @@
 import {
   IsEmail,
+  IsEnum,
   IsInt,
   IsOptional,
   IsString,
-  IsDateString,
   Max,
   MaxLength,
   Min,
 } from 'class-validator';
+import { CourseTypeEnum } from '../../enums/course-type.enum';
+import { OrderStatusEnum } from '../../enums/order-status.enum';
 
 export class CreateOrderDto {
   @IsOptional()
@@ -37,9 +39,8 @@ export class CreateOrderDto {
   age?: number | null;
 
   @IsOptional()
-  @IsString()
-  @MaxLength(10)
-  course?: string | null;
+  @IsEnum(CourseTypeEnum)
+  course?: CourseTypeEnum | null;
 
   @IsOptional()
   @IsString()
@@ -72,7 +73,6 @@ export class CreateOrderDto {
   msg?: string | null;
 
   @IsOptional()
-  @IsString()
-  @MaxLength(15)
-  status?: string | null;
+  @IsEnum(OrderStatusEnum)
+  status?: OrderStatusEnum | null;
 }
