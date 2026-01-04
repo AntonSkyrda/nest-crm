@@ -53,6 +53,6 @@ export class EnvService {
     this.adminEmail = configService.get<string>('ADMIN_EMAIL') || '';
     this.adminPassword = configService.get<string>('ADMIN_PASSWORD') || '';
     this.adminFirstName = configService.get<string>('ADMIN_FIRST_NAME') || '';
-    this.adminLastName = configService.get<string>('ADMIN_LASTNAME') || '';
+    this.adminLastName = configService.get<string>('ADMIN_LAST_NAME') || '';
   }
 }

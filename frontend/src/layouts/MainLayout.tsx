@@ -13,7 +13,7 @@ export const MainLayout = () => {
     return(
         <div className="min-h-svh bg-background">
             <HeaderComponent/>
-            <main className="mx-auto max-w-5xl p-4">
+            <main className="w-full px-4 py-6">
                 <Outlet/>
             </main>
         </div>

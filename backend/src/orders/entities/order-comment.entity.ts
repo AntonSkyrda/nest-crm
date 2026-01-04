@@ -19,12 +19,12 @@ export class OrderComment {
   @Column({ type: 'varchar', length: 255 })
   authorLastName: string;
 
+  @Column({ name: 'orderId', type: 'bigint', nullable: false })
+  orderId: number;
+
   @ManyToOne(() => Order, (order) => order.comments, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'orderId' })
   order: Order;
-
-  @Column({ type: 'int' })
-  orderId: number;
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;

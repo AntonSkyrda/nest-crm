@@ -30,6 +30,21 @@ export const fetchOrders = createAsyncThunk<
     }
 });
 
+export const addOrderComment = createAsyncThunk<
+    IOrder,
+    {orderId: number; text: string},
+    { rejectValue: string }
+>(
+    "orders/addOrderComment",
+    async ({orderId, text}, {rejectWithValue}) => {
+        try {
+            return await ordersService.addOrderComment(orderId, text);
+        } catch (e) {
+            return rejectWithValue((e as Error).message);
+        }
+    }
+)
+
 const ordersSlice = createSlice({
     name: "orders",
     initialState,
@@ -48,7 +63,12 @@ const ordersSlice = createSlice({
             .addCase(fetchOrders.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload ?? "Failed to load orders"
-            });
+            })
+            .addCase(addOrderComment.fulfilled, (state, action) => {
+                const updated = action.payload;
+                const idx = state.orders.findIndex(order => order.id === updated.id);
+                if (idx !== -1) state.orders[idx] = updated;
+            })
     },
 })
 

@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -10,7 +11,9 @@ import { User } from '../../auth/enteties/user.entity';
 import { Group } from '../../groups/entities/group.entity';
 import { OrderComment } from './order-comment.entity';
 import { OrderStatusEnum } from '../../enums/order-status.enum';
-import { CourseTypeEnum } from '../../enums/course-type.enum';
+import { OrderCoursesEnum } from '../../enums/order-courses.enum';
+import { OrderCoursesTypeEnum } from '../../enums/order-courses-type.enum';
+import { OrderCoursesTypeFormatEnum } from '../../enums/order-courses-format.enum';
 
 @Entity({ name: 'orders' })
 export class Order {
@@ -32,13 +35,13 @@ export class Order {
   @Column({ type: 'int', nullable: true })
   age: number | null;
 
-  @Column({ type: 'enum', enum: CourseTypeEnum, nullable: true })
-  course: CourseTypeEnum | null;
+  @Column({ type: 'enum', enum: OrderCoursesEnum, nullable: true })
+  course: OrderCoursesEnum | null;
 
-  @Column({ type: 'varchar', length: 15, nullable: true })
+  @Column({ type: 'enum', enum: OrderCoursesTypeFormatEnum, nullable: true })
   course_format: string | null;
 
-  @Column({ type: 'varchar', length: 100, nullable: true })
+  @Column({ type: 'enum', enum: OrderCoursesTypeEnum, nullable: true })
   course_type: string | null;
 
   @Column({ type: 'int', nullable: true })
@@ -67,9 +70,11 @@ export class Order {
   groupId: number | null;
 
   @ManyToOne(() => User, { onDelete: 'SET NULL' })
+  @JoinColumn({ name: 'managerId' })
   manager: User | null;
 
   @ManyToOne(() => Group, { onDelete: 'SET NULL' })
+  @JoinColumn({ name: 'groupId' })
   group: Group | null;
 
   @OneToMany(() => OrderComment, (comment) => comment.order, { cascade: false })

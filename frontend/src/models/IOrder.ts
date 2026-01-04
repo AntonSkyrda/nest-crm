@@ -1,5 +1,6 @@
 import type {IManager} from "./IManager.ts";
 import type {IGroup} from "./IGroup.ts";
+import type {IOrderComment} from "./IOrderComment.ts";
 
 export interface IOrder {
     id: number;
@@ -19,4 +20,5 @@ export interface IOrder {
     status: string;
     manager: IManager;
     group: IGroup;
+    comments?: IOrderComment[];
 }

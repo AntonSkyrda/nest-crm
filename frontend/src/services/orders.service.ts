@@ -1,9 +1,9 @@
-import type { IOrdersResponse } from "../models/IOrderResponse";
-import axios from "axios";
-import { urls } from "../constants/urls.ts";
-import { getApiErrorMessage } from "../utils/api-error";
+import type {IOrdersResponse} from "../models/IOrderResponse";
+import {urls} from "../constants/urls.ts";
+import {getApiErrorMessage} from "../utils/api-error";
 import type {SortDir} from "../constants/orders.ts";
 import type {IOrder} from "../models/IOrder.ts";
+import {apiService} from "./api.service.ts";
 
 export const ordersService = {
     async getAllOrders(params: {
@@ -13,7 +13,7 @@ export const ordersService = {
         sortDir?: SortDir;
     }): Promise<IOrdersResponse> {
         try {
-            const { data } = await axios.get<IOrdersResponse>(urls.orders.allOrders, {
+            const { data } = await apiService.get<IOrdersResponse>(urls.orders.allOrders, {
                 params,
             });
             return data;
@@ -22,12 +22,12 @@ export const ordersService = {
         }
     },
 
-    async getOrderById(id: number): Promise<IOrder> {
+    async addOrderComment(orderId: number | string, text: string): Promise<IOrder> {
         try {
-            const { data } = await axios.get<IOrder>(urls.orders.orderById(id))
+            const  { data } = await apiService.post<IOrder>(urls.orders.orderComment(orderId), {text})
             return data
         } catch (error) {
-            throw new Error(getApiErrorMessage(error, "Failed to get order details"));
+            throw new Error(getApiErrorMessage(error, "Failed to add comment"));
         }
     }
 };

@@ -52,7 +52,7 @@ export class OrdersService {
       take: safeLimit,
       skip: (safePage - 1) * safeLimit,
       order: { [safeSortBy]: safeSortDir.toUpperCase() as 'ASC' | 'DESC' },
-      relations: { manager: true, group: true },
+      relations: { manager: true, group: true, comments: true },
     });
 
     return {
@@ -100,35 +100,41 @@ export class OrdersService {
   async addComment(orderId: number, text: string, user: User): Promise<Order> {
     const order = await this.orderRepository.findOne({
       where: { id: orderId },
-      relations: { comments: true },
+      relations: { manager: true },
     });
 
-    if (!order)
-      throw new NotFoundException({ errorCode: OrderErrorEnum.OrderNotFound });
+    if (!order) {
+      throw new NotFoundException({
+        errorCode: OrderErrorEnum.OrderNotFound,
+      });
+    }
 
     if (order.managerId && order.managerId !== user.id) {
       throw new ForbiddenException('Order is taken by another manager');
     }
 
-    if (order.status === null || order.status === OrderStatusEnum.NEW) {
+    if (!order.managerId) {
+      order.managerId = user.id;
+      order.manager = user;
+    }
+
+    if (!order.status || order.status === OrderStatusEnum.NEW) {
       order.status = OrderStatusEnum.IN_WORK;
     }
-    order.managerId = user.id;
+
+    await this.orderRepository.save(order);
 
     const comment = this.orderCommentRepository.create({
       text,
       authorLastName: user.lastName,
-      order,
       orderId: order.id,
     });
 
     await this.orderCommentRepository.save(comment);
 
-    await this.orderRepository.save(order);
-
     return this.orderRepository.findOneOrFail({
-      where: { id: orderId },
-      relations: { comments: true },
+      where: { id: order.id },
+      relations: { manager: true, group: true, comments: true },
     });
   }
 }

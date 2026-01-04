@@ -1,4 +1,4 @@
-export enum CourseTypeEnum {
+export enum OrderCoursesEnum {
   FS = 'FS',
   QACX = 'QACX',
   JCX = 'JCX',
