@@ -21,6 +21,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CreateOrderCommentDto } from './dto/create-order-comment.dto';
 import { User } from '../auth/enteties/user.entity';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import { SetOrderGroupDto } from './dto/set-order-group.dto';
 
 @Controller('orders')
 export class OrdersController {
@@ -44,8 +45,9 @@ export class OrdersController {
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateOrderDto: UpdateOrderDto,
+    @CurrentUser() user: User,
   ): Promise<Order> {
-    return await this.ordersService.update(id, updateOrderDto);
+    return await this.ordersService.update(id, updateOrderDto, user.id);
   }
 
   @Delete(':id')
@@ -61,5 +63,15 @@ export class OrdersController {
     @CurrentUser() user: User,
   ) {
     return this.ordersService.addComment(id, dto.text, user);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Patch(':id/group')
+  async setGroup(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() setOrderGroupDto: SetOrderGroupDto,
+    @CurrentUser() user: User,
+  ) {
+    return this.ordersService.setGroup(id, setOrderGroupDto.groupId, user.id);
   }
 }
