@@ -2,6 +2,7 @@ export const baseUrl = import.meta.env.VITE_API_URL;
 
 const auth = `${baseUrl}/auth`
 const orders = `${baseUrl}/orders`
+const groups = `${baseUrl}/groups`
 
 export const urls = {
     auth: {
@@ -15,5 +16,9 @@ export const urls = {
         allOrders: orders,
         orderById: (id: number | string) => `${orders}/${id}`,
         orderComment: (id: number | string) => `${orders}/${id}/comments`,
+        orderGroup: (id: number | string) => `${orders}/${id}/group`,
+    },
+    groups: {
+        allGroups: groups,
     }
 }

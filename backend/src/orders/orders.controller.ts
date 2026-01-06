@@ -41,6 +41,7 @@ export class OrdersController {
     return this.ordersService.findById(id);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Patch(':id')
   async update(
     @Param('id', ParseIntPipe) id: number,

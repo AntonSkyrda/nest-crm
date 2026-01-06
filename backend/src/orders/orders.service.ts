@@ -81,6 +81,7 @@ export class OrdersService {
   async update(orderId: number, dto: UpdateOrderDto, userId: number) {
     const order = await this.orderRepository.findOne({
       where: { id: orderId },
+      relations: { manager: true, group: true, comments: true },
     });
     if (!order)
       throw new NotFoundException({
