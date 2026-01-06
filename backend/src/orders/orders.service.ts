@@ -16,6 +16,7 @@ import { OrdersQueryDto } from './dto/orders-query.dto';
 import { OrderComment } from './entities/order-comment.entity';
 import { OrderStatusEnum } from '../enums/order-status.enum';
 import { User } from '../auth/enteties/user.entity';
+import { Group } from '../groups/entities/group.entity';
 
 @Injectable()
 export class OrdersService {
@@ -24,6 +25,8 @@ export class OrdersService {
     private readonly orderRepository: Repository<Order>,
     @InjectRepository(OrderComment)
     private readonly orderCommentRepository: Repository<OrderComment>,
+    @InjectRepository(Group)
+    private readonly groupRepository: Repository<Group>,
   ) {}
 
   async create(createOrderDto: CreateOrderDto): Promise<Order> {
@@ -75,16 +78,23 @@ export class OrdersService {
 
     return order;
   }
-
-  async update(id: number, updateOrderDto: UpdateOrderDto): Promise<Order> {
-    const result = await this.orderRepository.update(id, updateOrderDto);
-
-    if (!result.affected) {
+  async update(orderId: number, dto: UpdateOrderDto, userId: number) {
+    const order = await this.orderRepository.findOne({
+      where: { id: orderId },
+      relations: { manager: true, group: true, comments: true },
+    });
+    if (!order)
       throw new NotFoundException({
         errorCode: OrderErrorEnum.OrderNotFound,
       });
+
+    if (order.managerId !== null && order.managerId !== userId) {
+      throw new ForbiddenException('You cannot edit this order');
     }
-    return this.findById(id);
+
+    Object.assign(order, dto);
+
+    return this.orderRepository.save(order);
   }
 
   async delete(id: number): Promise<void> {
@@ -136,5 +146,51 @@ export class OrdersService {
       where: { id: order.id },
       relations: { manager: true, group: true, comments: true },
     });
+  }
+
+  async setGroup(
+    orderId: number,
+    groupId: number,
+    userId: number,
+  ): Promise<Order> {
+    const order = await this.orderRepository.findOne({
+      where: { id: orderId },
+    });
+
+    if (!order) {
+      throw new NotFoundException({
+        errorCode: OrderErrorEnum.OrderNotFound,
+      });
+    }
+
+    if (order.managerId !== null && order.managerId !== userId) {
+      throw new ForbiddenException('You cannot edit this order');
+    }
+
+    const group = await this.groupRepository.findOne({
+      where: { id: groupId },
+    });
+
+    if (!group) {
+      throw new NotFoundException({
+        errorCode: OrderErrorEnum.GroupNotFound,
+      });
+    }
+
+    order.groupId = group.id;
+    order.group = group;
+
+    await this.orderRepository.save(order);
+
+    const updatedOrder = await this.orderRepository.findOne({
+      where: { id: order.id },
+      relations: { group: true, manager: true },
+    });
+
+    if (!updatedOrder) {
+      throw new NotFoundException({ errorCode: OrderErrorEnum.OrderNotFound });
+    }
+
+    return updatedOrder;
   }
 }

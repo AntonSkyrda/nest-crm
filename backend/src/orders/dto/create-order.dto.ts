@@ -46,11 +46,11 @@ export class CreateOrderDto {
 
   @IsOptional()
   @IsEnum(OrderCoursesTypeFormatEnum)
-  course_format?: string | null;
+  course_format?: OrderCoursesTypeFormatEnum | null;
 
   @IsOptional()
   @IsEnum(OrderCoursesTypeEnum)
-  course_type?: string | null;
+  course_type?: OrderCoursesTypeEnum | null;
 
   @IsOptional()
   @IsInt()

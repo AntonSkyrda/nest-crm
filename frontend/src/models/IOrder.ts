@@ -18,7 +18,9 @@ export interface IOrder {
     utm: string;
     msg: string;
     status: string;
+    managerId: number;
     manager: IManager;
+    groupId: number;
     group: IGroup;
     comments?: IOrderComment[];
 }

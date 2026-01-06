@@ -1,10 +1,13 @@
-import type {FC} from "react";
-import {useOrderComments} from "../../hooks/useOrderComments.ts";
-import {Button} from "../ui/button.tsx";
-import {formatDateTime, formatMoney} from "../../utils/utils.ts";
-import {Separator} from "../ui/separator.tsx";
-import {Input} from "../ui/input.tsx";
-import type {IOrder} from "../../models/IOrder.ts";
+import type { FC } from "react";
+import { useMemo, useState } from "react";
+import { useAppSelector } from "../../hooks/redux-hooks.ts";
+import { useOrderComments } from "../../hooks/useOrderComments.ts";
+import { Button } from "../ui/button.tsx";
+import { formatDateTime, formatMoney } from "../../utils/utils.ts";
+import { Separator } from "../ui/separator.tsx";
+import { Input } from "../ui/input.tsx";
+import type { IOrder } from "../../models/IOrder.ts";
+import {EditOrderModalComponent} from "../edit-order-modal-component/EditOrderModalComponent.tsx";
 
 type Props = {
     order: IOrder;
@@ -14,9 +17,17 @@ export const OrderComponent: FC<Props> = ({ order }) => {
     const { open, toggleOpen, text, setText, sending, canComment, submit } =
         useOrderComments(order);
 
+    const me = useAppSelector((s) => s.auth.me);
+
+    const canEdit = useMemo(() => {
+        if (!me) return false;
+        return order.managerId === null || order.managerId === me.id;
+    }, [me, order.managerId]);
+
+    const [editOpen, setEditOpen] = useState(false);
+
     return (
         <>
-            {/* MAIN ROW */}
             <tr
                 className="border-b last:border-b-0 hover:bg-muted/50 cursor-pointer"
                 onClick={toggleOpen}
@@ -42,7 +53,7 @@ export const OrderComponent: FC<Props> = ({ order }) => {
 
             {open && (
                 <tr className="border-b bg-muted/20">
-                    <td colSpan={15} className="p-4">
+                    <td colSpan={16} className="p-4">
                         <div className="space-y-4">
                             <div className="grid md:grid-cols-2 gap-4">
                                 <div>
@@ -83,6 +94,16 @@ export const OrderComponent: FC<Props> = ({ order }) => {
                                 >
                                     {sending ? "..." : "Send"}
                                 </Button>
+                                {/* ✅ колонка з кнопкою */}
+                                    <Button
+                                        disabled={!canEdit}
+                                        onClick={(e) => {
+                                            e.stopPropagation(); // щоб не відкривало comments row
+                                            setEditOpen(true);
+                                        }}
+                                    >
+                                        EDIT
+                                    </Button>
                             </div>
 
                             <div className="space-y-2">
@@ -103,6 +124,8 @@ export const OrderComponent: FC<Props> = ({ order }) => {
                     </td>
                 </tr>
             )}
+
+            <EditOrderModalComponent open={editOpen} onOpenChange={setEditOpen} order={order} />
         </>
     );
 };
